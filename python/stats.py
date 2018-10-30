@@ -1,4 +1,4 @@
-
+import sys 
 def are_overlapped(gstart,gend,tstart,tend):
     return ( (( gstart <= tend )  and (gstart >= tstart)) or 
             ((gend <= tend) and (gend >= tstart)) or 
@@ -15,7 +15,7 @@ def are_overlapped(gstart,gend,tstart,tend):
 import re
 from collections import defaultdict
 
-def run_stats(gold_path = 'id.deid', gold_cats_path= 'id-phi.phrase', test_paht='phone.phi'):
+def run_stats(gold_path = 'id.deid', gold_cats_path= 'id-phi.phrase', test_path='phone.phi'):
     """
     Inputs:
         gold_path: path to the gold standard file that does not include categories.
@@ -237,8 +237,8 @@ def run_stats(gold_path = 'id.deid', gold_cats_path= 'id-phi.phrase', test_paht=
                 fp += 1
 
         # Calculates sensitivity and positive predictive value (PPV)
-        sens = round((tp/(tp+fn))*1000)/1000.0;
-        ppv = round(( (total_test_phi-fp)/total_test_phi)*1000)/1000;
+        sens = round((float(tp)/(tp+fn))*1000)/1000.0;
+        ppv = round(( (total_test_phi-fp)/float(total_test_phi))*1000)/1000;
         # Prints code performance statistics on the screen
         print("\n\n==========================")
         print("\nNum of true positives = {}".format(tp))
@@ -251,7 +251,8 @@ def run_stats(gold_path = 'id.deid', gold_cats_path= 'id-phi.phrase', test_paht=
     
 if __name__== "__main__":
         
-    
-    
-    run_stats(sys.argv[1], sys.argv[2], sys.arg[3])
+      
+    # run_stats('id.deid', 'id-phi.phrase', 'age.phi')
+    run_stats('id.deid', 'id-phi.phrase', 'PTname.phi')
+    # run_stats(sys.argv[1], sys.argv[2], sys.arg[3])
     
