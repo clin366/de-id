@@ -6,7 +6,7 @@ python3 deid-ChenLin.py id.text age.phi
 
 python3 deid-ChenLin.py id.text PTname.phi
 
-(Modify the "main" function of deid-ChenLin.py to deid_age(sys.argv[1], sys.argv[2]) )
+(Modify the "main" function of deid-ChenLin.py to deid_ptname(sys.argv[1], sys.argv[2]) )
 
 python3 deid-ChenLin.py id.text HCPname.phi
 
