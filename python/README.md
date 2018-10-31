@@ -21,6 +21,7 @@ python3 deid-ChenLin.py id.text relativeName.phi
 (Modify the "main" function of deid-ChenLin.py to deid_relativeName(sys.argv[1], sys.argv[2]) )
 
 ###############Run stats.py######################
+
 python3 stats.py id.deid id-phi.phrase age.phi
 
 python3 stats.py id.deid id-phi.phrase PTname.phi
