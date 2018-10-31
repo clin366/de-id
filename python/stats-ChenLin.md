@@ -1,2 +1,37 @@
 stats of deid-ChenLin.py
 
+#######For Age#############
+Examining "Age" category.
+
+
+==========================
+
+Num of true positives = 3
+
+Num of false positives = 3
+
+Num of false negatives = 1
+
+Sensitivity/Recall = 0.75
+
+PPV/Specificity = 0.5
+
+==========================
+
+#######For PTName#############
+Examining "PTName" category.
+
+
+==========================
+
+Num of true positives = 39
+
+Num of false positives = 53
+
+Num of false negatives = 15
+
+Sensitivity/Recall = 0.722
+
+PPV/Specificity = 0.5
+
+==========================
