@@ -5,7 +5,6 @@ phone_pattern ='(\d{3}[-\.\s/]??\d{3}[-\.\s/]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s/]??
 # compiling the reg_ex would save sime time!
 ph_reg = re.compile(phone_pattern)
 
-
 def check_for_phone(patient,note,chunk, output_handle):
     """
     Inputs:
@@ -44,8 +43,6 @@ def check_for_phone(patient,note,chunk, output_handle):
             
             # write the result to one line of output
             output_handle.write(result+'\n')
-
-            
             
 def deid_phone(text_path= 'id.text', output_path = 'phone.phi'):
     """
@@ -111,7 +108,6 @@ def check_for_age(patient, note, chunk, output_handle, age_indicators_suff):
 
     # For each new note, the first line should be Patient X Note Y and then all the personal information positions
     output_handle.write('Patient {}\tNote {}\n'.format(patient,note))
-    
     
 #     age_pattern = "year old"
     ageInt_pattern = '[^\n\r\|]\n\d\d?\D'
@@ -193,7 +189,6 @@ def check_for_ptname(patient, note, chunk, output_handle, name_set):
 
     # For each new note, the first line should be Patient X Note Y and then all the personal information positions
     output_handle.write('Patient {}\tNote {}\n'.format(patient,note))
-    
     
 #     age_pattern = "year old"
 #     ageInt_pattern = '[^\n\r\|]\n\d\d?\D'
@@ -437,16 +432,11 @@ def deid_relativeName(text_path= 'id.text', output_path = 'phone.phi'):
                     # initialize the chunk for the next note to be read
                     chunk = ''
 
-
-
-
-
 if __name__== "__main__":
     deid_age(sys.argv[1], sys.argv[2])
     # deid_ptname(sys.argv[1], sys.argv[2])
     # deid_relativeName(sys.argv[1], sys.argv[2])
     # deid_location(sys.argv[1], sys.argv[2])
     # deid_hcpname(sys.argv[1], sys.argv[2])
-
     # deid_phone(sys.argv[1], sys.argv[2])
     
