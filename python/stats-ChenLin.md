@@ -1,6 +1,7 @@
 stats of deid-ChenLin.py
 
 #######For Age#############
+
 Examining "Age" category.
 
 
@@ -19,6 +20,7 @@ PPV/Specificity = 0.5
 ==========================
 
 #######For PTName#############
+
 Examining "PTName" category.
 
 
@@ -33,5 +35,63 @@ Num of false negatives = 15
 Sensitivity/Recall = 0.722
 
 PPV/Specificity = 0.5
+
+==========================
+
+#######For HCPname#############
+
+Examining "HCPName" category.
+
+
+==========================
+
+Num of true positives = 255
+
+Num of false positives = 30
+
+Num of false negatives = 338
+
+Sensitivity/Recall = 0.43
+
+PPV/Specificity = 0.896
+
+==========================
+
+#######For Location#############
+
+Examining "Location" category.
+
+
+==========================
+
+Num of true positives = 175
+
+Num of false positives = 2
+
+Num of false negatives = 192
+
+Sensitivity/Recall = 0.477
+
+PPV/Specificity = 0.987
+
+==========================
+
+
+#######For RelativeProxyName#############
+
+Examining "RelativeProxyName" category.
+
+
+==========================
+
+Num of true positives = 54
+
+Num of false positives = 71
+
+Num of false negatives = 121
+
+Sensitivity/Recall = 0.309
+
+PPV/Specificity = 0.478
 
 ==========================
