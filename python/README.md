@@ -5,7 +5,7 @@ De-Id python project
 python3 deid-ChenLin.py id.text PTname.phi
 
 python3 deid-ChenLin.py id.text age.phi 
-
+( modify the "main" function of deid-ChenLin.py to deid_age(sys.argv[1], sys.argv[2]) )
 
 ###############Run stats.py######################
 
