@@ -34,3 +34,21 @@ Sensitivity/Recall = 0.722
 PPV/Specificity = 0.5
 
 ==========================
+
+#######For HCPname#############
+Examining "HCPName" category.
+
+
+==========================
+
+Num of true positives = 255
+
+Num of false positives = 30
+
+Num of false negatives = 338
+
+Sensitivity/Recall = 0.43
+
+PPV/Specificity = 0.896
+
+==========================
