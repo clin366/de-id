@@ -102,14 +102,8 @@ def deid_phone(text_path= 'id.text', output_path = 'phone.phi'):
                     chunk = ''
 
 ############Define deid_age()###############################
-# Age indicators that follow ages
-# age_indicators_suff = ["year old", "y\. o\.", "y\.o\.", "yo", "years old", "year-old", "-year-old", "years-old", "-years-old", "years of age", "yrs of age"]
-age_indicators_suff = [ "yo"]
 
-# Age indicators that precede ages
-age_indicators_pre = ["he is", "she is", "patient is"]
-
-def check_for_age(patient, note, chunk, output_handle):
+def check_for_age(patient, note, chunk, output_handle, age_indicators_suff):
     
     # The perl code handles texts a bit differently, 
     # we found that adding this offset to start and end positions would produce the same results
@@ -149,6 +143,10 @@ def check_for_age(patient, note, chunk, output_handle):
                 output_handle.write(result+'\n')    
 
 def deid_age(text_path= 'id.text', output_path = 'phone.phi'):
+
+    # Age indicators that follow ages
+    # age_indicators_suff = ["year old", "y\. o\.", "y\.o\.", "yo", "years old", "year-old", "-year-old", "years-old", "-years-old", "years of age", "yrs of age"]
+    age_indicators_suff = [ "yo"]
     # start of each note has the patter: START_OF_RECORD=PATIENT||||NOTE||||
     # where PATIENT is the patient number and NOTE is the note number.
     start_of_record_pattern = '^start_of_record=(\d+)\|\|\|\|(\d+)\|\|\|\|$'
@@ -180,29 +178,14 @@ def deid_age(text_path= 'id.text', output_path = 'phone.phi'):
                     # pass all to check_for_phone to find any phone numbers in note.
 #                     print(chunk)
 #                     check_for_phone(patient,note,chunk.strip(), output_file)
-                    check_for_age(patient,note,chunk.strip(), output_file)
+                    check_for_age(patient,note,chunk.strip(), output_file, age_indicators_suff)
                     
                     # initialize the chunk for the next note to be read
                     chunk = ''
 
-############Define deid_PTname()###############################
-ptname_path = '../lists/pid_patientname.txt'
+############Define deid_ptname()###############################
 
-name_set = set()
-with open(ptname_path, 'r') as fi:
-    line = fi.readline()
-    
-    while line:
-#         print(line)
-        split_line = line.split('||||')
-        if (len(split_line[1].strip()) > 4): 
-            name_set.add(split_line[1].strip() )
-            
-        if (len(split_line[2].strip()) > 4): 
-            name_set.add(split_line[2].strip() )
-        line = fi.readline()
-
-def check_for_ptname(patient, note, chunk, output_handle):
+def check_for_ptname(patient, note, chunk, output_handle, name_set):
     
     # The perl code handles texts a bit differently, 
     # we found that adding this offset to start and end positions would produce the same results
@@ -237,6 +220,23 @@ def check_for_ptname(patient, note, chunk, output_handle):
             output_handle.write(result+'\n')    
 
 def deid_ptname(text_path= 'id.text', output_path = 'phone.phi'):
+
+    ## generate nameset
+    ptname_path = '../lists/pid_patientname.txt'
+
+    name_set = set()
+    with open(ptname_path, 'r') as fi:
+        line = fi.readline()
+        
+        while line:
+    #         print(line)
+            split_line = line.split('||||')
+            if (len(split_line[1].strip()) > 4): 
+                name_set.add(split_line[1].strip() )
+                
+            if (len(split_line[2].strip()) > 4): 
+                name_set.add(split_line[2].strip() )
+            line = fi.readline()
     # start of each note has the patter: START_OF_RECORD=PATIENT||||NOTE||||
     # where PATIENT is the patient number and NOTE is the note number.
     start_of_record_pattern = '^start_of_record=(\d+)\|\|\|\|(\d+)\|\|\|\|$'
@@ -268,14 +268,185 @@ def deid_ptname(text_path= 'id.text', output_path = 'phone.phi'):
                     # pass all to check_for_phone to find any phone numbers in note.
 #                     print(chunk)
 #                     check_for_phone(patient,note,chunk.strip(), output_file)
-                    check_for_ptname(patient,note,chunk.strip(), output_file)
+                    check_for_ptname(patient,note,chunk.strip(), output_file, name_set)
                     
                     # initialize the chunk for the next note to be read
                     chunk = ''
 
-if __name__== "__main__":
+############Define deid_hcpname()###############################
+def deid_hcpname(text_path= 'id.text', output_path = 'phone.phi'):
 
-    deid_ptname(sys.argv[1], sys.argv[2])
-    # deid_age(sys.argv[1], sys.argv[2])
+    ## generate nameset
+    ptname_path = '../lists/doctor_last_names.txt'
+
+    name_set = set()
+    with open(ptname_path, 'r') as fi:
+        line = fi.readline()
+        
+        while line:
+
+            doc_name = line.strip()
+            if (len(doc_name) > 4): 
+                name_set.add(doc_name )
+
+            line = fi.readline()
+
+    # start of each note has the patter: START_OF_RECORD=PATIENT||||NOTE||||
+    # where PATIENT is the patient number and NOTE is the note number.
+    start_of_record_pattern = '^start_of_record=(\d+)\|\|\|\|(\d+)\|\|\|\|$'
+
+    # end of each note has the patter: ||||END_OF_RECORD
+    end_of_record_pattern = '\|\|\|\|END_OF_RECORD$'
+
+    # open the output file just once to save time on the time intensive IO
+    with open(output_path,'w+') as output_file:
+        with open(text_path) as text:
+            # initilize an empty chunk. Go through the input file line by line
+            # whenever we see the start_of_record pattern, note patient and note numbers and start 
+            # adding everything to the 'chunk' until we see the end_of_record.
+            chunk = ''
+            for line in text:
+#                 print(line)
+                record_start = re.findall(start_of_record_pattern,line,flags=re.IGNORECASE)
+                
+                if len(record_start):
+#                     print(record_start[0])
+                    patient, note = record_start[0]
+                chunk += line
+
+                # check to see if we have seen the end of one note
+                record_end = re.findall(end_of_record_pattern, line,flags=re.IGNORECASE)
+
+                if len(record_end):
+                    # Now we have a full patient note stored in `chunk`, along with patient numerb and note number
+                    # pass all to check_for_phone to find any phone numbers in note.
+#                     print(chunk)
+#                     check_for_phone(patient,note,chunk.strip(), output_file)
+                    check_for_ptname(patient,note,chunk.strip(), output_file, name_set)
+                    
+                    # initialize the chunk for the next note to be read
+                    chunk = ''
+
+############Define deid_location()###############################
+def deid_location(text_path= 'id.text', output_path = 'phone.phi'):
+
+    ## generate name_set
+    ptname_path = '../lists/stripped_hospitals.txt'
+
+    name_set = set()
+    with open(ptname_path, 'r') as fi:
+        line = fi.readline()
+            
+        while line:
+
+            doc_name = line.strip()
+            if (len(doc_name) > 4): 
+                name_set.add(doc_name.upper())
+
+            line = fi.readline()
+
+    name_set.add('CROSS')
+    # start of each note has the patter: START_OF_RECORD=PATIENT||||NOTE||||
+    # where PATIENT is the patient number and NOTE is the note number.
+    start_of_record_pattern = '^start_of_record=(\d+)\|\|\|\|(\d+)\|\|\|\|$'
+
+    # end of each note has the patter: ||||END_OF_RECORD
+    end_of_record_pattern = '\|\|\|\|END_OF_RECORD$'
+
+    # open the output file just once to save time on the time intensive IO
+    with open(output_path,'w+') as output_file:
+        with open(text_path) as text:
+            # initilize an empty chunk. Go through the input file line by line
+            # whenever we see the start_of_record pattern, note patient and note numbers and start 
+            # adding everything to the 'chunk' until we see the end_of_record.
+            chunk = ''
+            for line in text:
+#                 print(line)
+                record_start = re.findall(start_of_record_pattern,line,flags=re.IGNORECASE)
+                
+                if len(record_start):
+#                     print(record_start[0])
+                    patient, note = record_start[0]
+                chunk += line
+
+                # check to see if we have seen the end of one note
+                record_end = re.findall(end_of_record_pattern, line,flags=re.IGNORECASE)
+
+                if len(record_end):
+                    # Now we have a full patient note stored in `chunk`, along with patient numerb and note number
+                    # pass all to check_for_phone to find any phone numbers in note.
+#                     print(chunk)
+#                     check_for_phone(patient,note,chunk.strip(), output_file)
+                    check_for_ptname(patient,note,chunk.strip(), output_file, name_set)
+                    
+                    # initialize the chunk for the next note to be read
+                    chunk = ''
+
+############Define deid_relativeName()###############################
+
+def deid_relativeName(text_path= 'id.text', output_path = 'phone.phi'):
+    ## generate nameset
+    ptname_path = '../lists/pid_patientname.txt'
+    name_set = set()
+    with open(ptname_path, 'r') as fi:
+        line = fi.readline()
+        
+        while line:
+    #         print(line)
+            split_line = line.split('||||')
+            if (len(split_line[1].strip()) > 3): 
+                name_set.add(split_line[1].strip() )
+                
+            if (len(split_line[2].strip()) > 3): 
+                name_set.add(split_line[2].strip() )
+            line = fi.readline()
+    name_set.remove('WILL')
+    # start of each note has the patter: START_OF_RECORD=PATIENT||||NOTE||||
+    # where PATIENT is the patient number and NOTE is the note number.
+    start_of_record_pattern = '^start_of_record=(\d+)\|\|\|\|(\d+)\|\|\|\|$'
+
+    # end of each note has the patter: ||||END_OF_RECORD
+    end_of_record_pattern = '\|\|\|\|END_OF_RECORD$'
+
+    # open the output file just once to save time on the time intensive IO
+    with open(output_path,'w+') as output_file:
+        with open(text_path) as text:
+            # initilize an empty chunk. Go through the input file line by line
+            # whenever we see the start_of_record pattern, note patient and note numbers and start 
+            # adding everything to the 'chunk' until we see the end_of_record.
+            chunk = ''
+            for line in text:
+#                 print(line)
+                record_start = re.findall(start_of_record_pattern,line,flags=re.IGNORECASE)
+                
+                if len(record_start):
+#                     print(record_start[0])
+                    patient, note = record_start[0]
+                chunk += line
+
+                # check to see if we have seen the end of one note
+                record_end = re.findall(end_of_record_pattern, line,flags=re.IGNORECASE)
+
+                if len(record_end):
+                    # Now we have a full patient note stored in `chunk`, along with patient numerb and note number
+                    # pass all to check_for_phone to find any phone numbers in note.
+#                     print(chunk)
+#                     check_for_phone(patient,note,chunk.strip(), output_file)
+                    check_for_ptname(patient,note,chunk.strip(), output_file, name_set)
+                    
+                    # initialize the chunk for the next note to be read
+                    chunk = ''
+
+
+
+
+
+if __name__== "__main__":
+    deid_age(sys.argv[1], sys.argv[2])
+    # deid_ptname(sys.argv[1], sys.argv[2])
+    # deid_relativeName(sys.argv[1], sys.argv[2])
+    # deid_location(sys.argv[1], sys.argv[2])
+    # deid_hcpname(sys.argv[1], sys.argv[2])
+
     # deid_phone(sys.argv[1], sys.argv[2])
     
