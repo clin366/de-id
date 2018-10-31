@@ -70,3 +70,22 @@ Sensitivity/Recall = 0.477
 PPV/Specificity = 0.987
 
 ==========================
+
+
+#######For RelativeProxyName#############
+Examining "RelativeProxyName" category.
+
+
+==========================
+
+Num of true positives = 54
+
+Num of false positives = 71
+
+Num of false negatives = 121
+
+Sensitivity/Recall = 0.309
+
+PPV/Specificity = 0.478
+
+==========================
